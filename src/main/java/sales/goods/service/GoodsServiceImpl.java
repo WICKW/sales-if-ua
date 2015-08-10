@@ -73,28 +73,26 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     public Good rateGoodUpdate(int goodId, double rate) {
-        Good good = repository.findById(goodId);
-        long oldRatingCount = good.getRatingCount();
-        long newRatingCount = oldRatingCount + 1;
-        double oldRating = good.getRating();
-        double newRating = (oldRating * oldRatingCount + rate) / newRatingCount ;
-        good.setRating(newRating);
-        good.setRatingCount(newRatingCount);
-        repository.save(good);
-        return good;
+        return repository.save(updateGoodRatingAdd(goodId, rate));
     }
 
     @Override
     public Good rateGoodUpdateRemove(Long commentId) {
+        return repository.save(updateGoodRatingRemove(commentId));
+    }
+
+    private Good updateGoodRatingAdd(int goodId, double rate) {
+        Good good = repository.findById(goodId);
+        good.setRating((good.getRating() * good.getRatingCount() + rate) / (good.getRatingCount() + 1));
+        good.setRatingCount(good.getRatingCount() + 1);
+        return good;
+    }
+
+    private Good updateGoodRatingRemove(Long commentId) {
         Comment comment = commentRepository.findById(commentId);
         Good good = repository.findById(comment.getGoodId());
-        long oldRatingCount = good.getRatingCount();
-        long newRatingCount = oldRatingCount - 1;
-        double oldRating = good.getRating();
-        double newRating = (oldRating * oldRatingCount - comment.getRating()) / newRatingCount;
-        good.setRatingCount(newRatingCount);
-        good.setRating(newRating);
-        repository.save(good);
+        good.setRating((good.getRating() * good.getRatingCount() - comment.getRating()) / (good.getRatingCount() - 1));
+        good.setRatingCount(good.getRatingCount() - 1);
         return good;
     }
 }
