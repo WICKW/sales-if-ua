@@ -1,13 +1,13 @@
 package sales.users.controller;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import sales.notification.service.RegistrationServiceImpl;
 import sales.users.domain.User;
@@ -140,7 +140,8 @@ public class UserController {
             notes = "New user status: isBlockedNew = !isBlockedOld")
     @RequestMapping(value = "/lock/{userId}",
                     method = RequestMethod.PUT)
-    public void changeUserLock(@PathVariable(value = "userId") Long userId) {
+    public void changeUserLock(@ApiParam(value = "Id of user, which lockStatus have to be changed", required = true)
+                               @PathVariable(value = "userId") Long userId) {
         userService.changeUserLock(userId);
     }
 }

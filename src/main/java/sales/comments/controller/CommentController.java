@@ -4,10 +4,12 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sales.comments.domain.Comment;
 import sales.comments.service.ICommentService;
+import sales.goods.service.GoodsService;
 
 import java.util.List;
 
@@ -18,6 +20,10 @@ public class CommentController {
 
     @Autowired
     private ICommentService commentService;
+
+    @Autowired
+    @Qualifier("goodsService")
+    private GoodsService goodsService;
 
     public CommentController() {}
 
@@ -32,6 +38,7 @@ public class CommentController {
     @ResponseStatus(HttpStatus.CREATED)
     public Comment addComment(@ApiParam(value = "Comment object that needs to be added", required = true)
                               @RequestBody Comment comment) {
+        goodsService.rateGoodUpdate(comment.getGoodId(), comment.getRating());
         return commentService.addComment(comment);
     }
 
@@ -55,6 +62,7 @@ public class CommentController {
             method = RequestMethod.DELETE)
     public void removeCommentById(@ApiParam(value = "Comment object that needs to be added", required = true)
                                   @PathVariable(value = "commentId") Long commentId) {
+        goodsService.rateGoodUpdateRemove(commentId);
         commentService.removeCommentById(commentId);
     }
 }

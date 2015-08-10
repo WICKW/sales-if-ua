@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sales.comments.domain.Comment;
+import sales.comments.repository.ICommentRepository;
 import sales.goods.domain.Good;
 import sales.goods.repository.GoodsRepository;
 
@@ -20,6 +22,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private GoodsRepository repository;
+
+    @Autowired
+    private ICommentRepository commentRepository;
 
     public Good get(long id) {
         return repository.findById(id);
@@ -61,8 +66,35 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+
     public List<Good> getNewest(int size) {
         PageRequest pageRequest = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "date"));
         return Lists.newArrayList(repository.findAll(pageRequest).getContent());
+    }
+
+    public Good rateGoodUpdate(int goodId, double rate) {
+        Good good = repository.findById(goodId);
+        long oldRatingCount = good.getRatingCount();
+        long newRatingCount = oldRatingCount + 1;
+        double oldRating = good.getRating();
+        double newRating = (oldRating * oldRatingCount + rate) / newRatingCount ;
+        good.setRating(newRating);
+        good.setRatingCount(newRatingCount);
+        repository.save(good);
+        return good;
+    }
+
+    @Override
+    public Good rateGoodUpdateRemove(Long commentId) {
+        Comment comment = commentRepository.findById(commentId);
+        Good good = repository.findById(comment.getGoodId());
+        long oldRatingCount = good.getRatingCount();
+        long newRatingCount = oldRatingCount - 1;
+        double oldRating = good.getRating();
+        double newRating = (oldRating * oldRatingCount - comment.getRating()) / newRatingCount;
+        good.setRatingCount(newRatingCount);
+        good.setRating(newRating);
+        repository.save(good);
+        return good;
     }
 }

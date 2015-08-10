@@ -21,4 +21,8 @@ public interface GoodsService {
 
     public List<Good> getNewest(int size);
 
+    public Good rateGoodUpdate(int goodId, double rate);
+
+    public Good rateGoodUpdateRemove(Long commentId);
+
 }

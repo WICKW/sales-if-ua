@@ -11,4 +11,6 @@ public interface ICommentRepository extends JpaRepository<Comment, Long> {
 
     public void removeById(Long id);
 
+    public Comment findById(Long commentId);
+
 }
