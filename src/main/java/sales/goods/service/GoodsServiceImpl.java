@@ -72,6 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
         return Lists.newArrayList(repository.findAll(pageRequest).getContent());
     }
 
+    @Override
     public Good rateGoodUpdate(int goodId, double rate) {
         return repository.save(updateGoodRatingAdd(goodId, rate));
     }
@@ -95,4 +96,5 @@ public class GoodsServiceImpl implements GoodsService {
         good.setRatingCount(good.getRatingCount() - 1);
         return good;
     }
+
 }

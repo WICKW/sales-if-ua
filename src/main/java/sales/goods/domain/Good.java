@@ -55,6 +55,12 @@ public class Good implements Serializable {
     @JsonIgnore
     private long ratingCount;
 
+    @PrePersist
+    private void onCreateCommentInstance() {
+        this.rating = 0;
+        this.ratingCount = 0;
+    }
+
     @JsonCreator
     public Good() {
     }
